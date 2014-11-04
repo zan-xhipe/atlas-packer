@@ -65,11 +65,14 @@ func (n *Node) print() {
 	}
 }
 
-func (n *Node) insert(img *sprite) (*image.Rectangle, error) {
+func (n *Node) insert(img *sprite) (image.Rectangle, error) {
+	// returned when no valid rectangle is found
+	nop := image.Rect(0, 0, 0, 0)
+
 	// there is already an image in this node
 	if n.img != nil {
 		fmt.Println("already contains an image")
-		return nil, errors.New("already contains an image")
+		return nop, errors.New("already contains an image")
 	}
 
 	// try to insert into either of the nodes children
@@ -87,13 +90,13 @@ func (n *Node) insert(img *sprite) (*image.Rectangle, error) {
 
 	if n.rect.Dx() < img.size.x || n.rect.Dy() < img.size.y {
 		fmt.Println("space too small")
-		return nil, errors.New("space too small")
+		return nop, errors.New("space too small")
 	}
 
 	if n.rect.Dx() == img.size.x && n.rect.Dy() == img.size.y {
 		fmt.Println("prefect fit")
 		n.img = img
-		return &n.rect, nil
+		return n.rect, nil
 	}
 
 	if n.rect.Dx() >= img.size.x && n.rect.Dy() >= img.size.y {
@@ -168,8 +171,10 @@ func main() {
 	for i := range sprites {
 		s := &sprites[i]
 		fmt.Printf("inserting %s\n", s.name)
-		n.insert(s)
-		draw.Draw(dst, s.rect, s.img, image.ZP, draw.Src)
+		rect, err := n.insert(s)
+		if err == nil {
+			draw.Draw(dst, rect, s.img, image.ZP, draw.Src)
+		}
 	}
 
 	n.print()
