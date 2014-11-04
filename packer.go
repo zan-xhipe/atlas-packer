@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -65,79 +64,73 @@ func (n *Node) print() {
 	}
 }
 
-func (n *Node) insert(img *sprite) (image.Rectangle, error) {
-	// returned when no valid rectangle is found
-	nop := image.Rect(0, 0, 0, 0)
+func (n *Node) isLeaf() bool {
+	return n.child[0] == nil || n.child[1] == nil
+}
 
-	// there is already an image in this node
-	if n.img != nil {
-		fmt.Println("already contains an image")
-		return nop, errors.New("already contains an image")
-	}
+func (n *Node) insert(img *sprite) *Node {
+	if !n.isLeaf() {
+		node := n.child[0].insert(img)
 
-	// try to insert into either of the nodes children
-	if n.child[0] != nil {
-		fmt.Println("has a 0 child")
-		rc, err := n.child[0].insert(img)
-
-		if err != nil {
-			fmt.Println("has a 1 child")
-			return n.child[1].insert(img)
+		if node != nil {
+			return node
 		} else {
-			return rc, nil
+			return n.child[1].insert(img)
 		}
 	}
 
+	// there is already an image in this node
+	if n.img != nil {
+		return nil
+	}
+
+	// space too small
 	if n.rect.Dx() < img.size.x || n.rect.Dy() < img.size.y {
-		fmt.Println("space too small")
-		return nop, errors.New("space too small")
+		return nil
 	}
 
+	// just right
 	if n.rect.Dx() == img.size.x && n.rect.Dy() == img.size.y {
-		fmt.Println("prefect fit")
 		n.img = img
-		return n.rect, nil
+		return n
 	}
 
-	if n.rect.Dx() >= img.size.x && n.rect.Dy() >= img.size.y {
-		fmt.Println("Split")
-		n.split(img)
-	}
+	// the space that is left will be large enough to split
+	n.split(img)
 
-	return n.insert(img)
-
+	return n.child[0].insert(img)
 }
 
 func (n *Node) split(img *sprite) {
-	var tl0 image.Point
-	var br0 image.Point
-
-	var tl1 image.Point
-	var br1 image.Point
-
-	dx := n.size().x - img.size.x
-	dy := n.size().y - img.size.y
+	dx := n.rect.Dx() - img.size.x
+	dy := n.rect.Dy() - img.size.y
 
 	rc := n.rect
 
-	tl0 = rc.Min
-	br1 = rc.Max
-
 	if dx > dy {
-		fmt.Println("split on x")
-		br0 = image.Point{rc.Min.X + img.size.x, rc.Dy()}
-		tl1 = image.Point{rc.Min.X + img.size.x - 1, rc.Min.Y}
+		n.child[0] = &Node{rect: image.Rect(
+			rc.Min.X,
+			rc.Min.Y,
+			rc.Min.X+img.size.x,
+			rc.Max.Y)}
+		n.child[1] = &Node{rect: image.Rect(
+			rc.Min.X+img.size.x,
+			rc.Min.Y,
+			rc.Max.X,
+			rc.Max.Y)}
 	} else {
-		fmt.Println("split on y")
-		br0 = image.Point{rc.Dx(), rc.Min.Y + img.size.y}
-		tl1 = image.Point{rc.Min.X, rc.Min.Y + img.size.y - 1}
+		n.child[0] = &Node{rect: image.Rect(
+			rc.Min.X,
+			rc.Min.Y,
+			rc.Max.X,
+			rc.Min.Y+img.size.y)}
+		n.child[1] = &Node{rect: image.Rect(
+			rc.Min.X,
+			rc.Min.Y+img.size.y,
+			rc.Max.X,
+			rc.Max.Y)}
 	}
 
-	rect0 := image.Rectangle{tl0, br0}
-	n.child[0] = &Node{rect: rect0}
-
-	rect1 := image.Rectangle{tl1, br1}
-	n.child[1] = &Node{rect: rect1}
 }
 
 func main() {
@@ -166,18 +159,17 @@ func main() {
 	// the final image
 	dst := image.NewRGBA(image.Rect(0, 0, 2048, 2048))
 
-	n := Node{rect: image.Rect(0, 0, 1024, 1024)}
+	n := Node{rect: image.Rect(0, 0, 2048, 2048)}
 
 	for i := range sprites {
 		s := &sprites[i]
-		fmt.Printf("inserting %s\n", s.name)
-		rect, err := n.insert(s)
-		if err == nil {
-			draw.Draw(dst, rect, s.img, image.ZP, draw.Src)
+		node := n.insert(s)
+		if node != nil {
+			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
 		}
 	}
 
-	n.print()
+	//n.print()
 
 	writer, err := os.Create("test.png")
 	err = png.Encode(writer, dst)
