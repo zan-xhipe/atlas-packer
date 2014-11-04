@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -64,35 +65,35 @@ func (n *Node) print() {
 	}
 }
 
-func (n *Node) insert(img *sprite) bool {
+func (n *Node) insert(img *sprite) (*image.Rectangle, error) {
 	// there is already an image in this node
 	if n.img != nil {
 		fmt.Println("already contains an image")
-		return false
+		return nil, errors.New("already contains an image")
 	}
 
 	// try to insert into either of the nodes children
 	if n.child[0] != nil {
 		fmt.Println("has a 0 child")
-		in := n.child[0].insert(img)
+		rc, err := n.child[0].insert(img)
 
-		if in {
-			return true
-		} else {
+		if err != nil {
 			fmt.Println("has a 1 child")
 			return n.child[1].insert(img)
+		} else {
+			return rc, nil
 		}
 	}
 
 	if n.rect.Dx() < img.size.x || n.rect.Dy() < img.size.y {
 		fmt.Println("space too small")
-		return false
+		return nil, errors.New("space too small")
 	}
 
 	if n.rect.Dx() == img.size.x && n.rect.Dy() == img.size.y {
 		fmt.Println("prefect fit")
 		n.img = img
-		return true
+		return &n.rect, nil
 	}
 
 	if n.rect.Dx() >= img.size.x && n.rect.Dy() >= img.size.y {
