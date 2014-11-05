@@ -105,30 +105,28 @@ func (n *Node) split(img *sprite) {
 	dx := n.rect.Dx() - img.size.x
 	dy := n.rect.Dy() - img.size.y
 
-	rc := n.rect
-
 	if dx > dy {
 		n.child[0] = &Node{rect: image.Rect(
-			rc.Min.X,
-			rc.Min.Y,
-			rc.Min.X+img.size.x,
-			rc.Max.Y)}
+			n.rect.Min.X,
+			n.rect.Min.Y,
+			n.rect.Min.X+img.size.x,
+			n.rect.Max.Y)}
 		n.child[1] = &Node{rect: image.Rect(
-			rc.Min.X+img.size.x,
-			rc.Min.Y,
-			rc.Max.X,
-			rc.Max.Y)}
+			n.rect.Min.X+img.size.x,
+			n.rect.Min.Y,
+			n.rect.Max.X,
+			n.rect.Max.Y)}
 	} else {
 		n.child[0] = &Node{rect: image.Rect(
-			rc.Min.X,
-			rc.Min.Y,
-			rc.Max.X,
-			rc.Min.Y+img.size.y)}
+			n.rect.Min.X,
+			n.rect.Min.Y,
+			n.rect.Max.X,
+			n.rect.Min.Y+img.size.y)}
 		n.child[1] = &Node{rect: image.Rect(
-			rc.Min.X,
-			rc.Min.Y+img.size.y,
-			rc.Max.X,
-			rc.Max.Y)}
+			n.rect.Min.X,
+			n.rect.Min.Y+img.size.y,
+			n.rect.Max.X,
+			n.rect.Max.Y)}
 	}
 
 }
@@ -143,14 +141,9 @@ func main() {
 	files, _ := ioutil.ReadDir(inputDir)
 	sprites := make([]sprite, len(files))
 
-	totalX := 0
-	totalY := 0
-
 	for i := range sprites {
 		s := readSprite(inputDir, files[i].Name())
 		sprites[i] = s
-		totalX += s.size.x
-		totalY += s.size.y
 	}
 
 	// we want to place the largest sprite first
@@ -166,10 +159,11 @@ func main() {
 		node := n.insert(s)
 		if node != nil {
 			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
+		} else {
+			fmt.Printf("could not place %s\n", s.name)
 		}
-	}
 
-	//n.print()
+	}
 
 	writer, err := os.Create("test.png")
 	err = png.Encode(writer, dst)
