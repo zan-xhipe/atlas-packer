@@ -180,7 +180,7 @@ func readSprite(dir, name string) (s sprite) {
 	}
 	defer reader.Close()
 
-	img, err := png.Decode(reader)
+	img, _, err := image.Decode(reader)
 	if err != nil {
 		log.Fatal(err)
 	}
