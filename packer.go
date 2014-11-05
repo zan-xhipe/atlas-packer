@@ -34,11 +34,11 @@ func (a Size) Smaller(b Size) bool {
 }
 
 type sprite struct {
-	name string
-	img  image.Image
-	rect image.Rectangle
-	area int
-	size Size
+	name   string
+	img    image.Image
+	area   int
+	offset image.Point
+	size   Size
 }
 
 type ByArea []sprite
@@ -94,6 +94,7 @@ func (n *Node) insert(img *sprite) *Node {
 
 	// just right
 	if n.rect.Dx() == img.size.x && n.rect.Dy() == img.size.y {
+		img.offset = n.rect.Min
 		n.img = img
 		return n
 	}
@@ -222,8 +223,8 @@ func readSprite(dir, name string, space int) (s sprite) {
 
 	s.name = strings.TrimSuffix(name, filepath.Ext(name))
 	s.img = img
-	s.rect = img.Bounds()
-	s.size = Size{s.rect.Dx() + space, s.rect.Dy() + space}
+	rect := img.Bounds()
+	s.size = Size{rect.Dx() + space, rect.Dy() + space}
 	s.area = s.size.x * s.size.y
 	return
 }
