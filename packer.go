@@ -7,7 +7,9 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"sort"
+	"strings"
 
 	"image"
 	"image/draw"
@@ -186,7 +188,7 @@ func readSprite(dir, name string, space int) (s sprite) {
 		log.Fatal(err)
 	}
 
-	s.name = name
+	s.name = strings.TrimSuffix(name, filepath.Ext(name))
 	s.img = img
 	s.rect = img.Bounds()
 	s.size = Size{s.rect.Dx() + space, s.rect.Dy() + space}
