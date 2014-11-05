@@ -134,6 +134,10 @@ func (n *Node) split(img *sprite) {
 }
 
 func main() {
+	var space int
+
+	flag.IntVar(&space, "space", 1, "space added between images")
+
 	flag.Parse()
 
 	args := flag.Args()
@@ -145,7 +149,7 @@ func main() {
 	sprites := make([]sprite, len(files))
 
 	for i := range sprites {
-		s := readSprite(inputDir, files[i].Name(), 1)
+		s := readSprite(inputDir, files[i].Name(), space)
 		sprites[i] = s
 	}
 
