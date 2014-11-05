@@ -20,17 +20,6 @@ import (
 type Size struct {
 	x, y int
 }
-
-func (a Size) Equal(b Size) bool {
-	return a.x == b.x && a.y == b.y
-}
-
-func (a Size) Larger(b Size) bool {
-	return b.x < a.x && b.y < a.y
-}
-
-func (a Size) Smaller(b Size) bool {
-	return !a.Larger(b)
 }
 
 type sprite struct {
