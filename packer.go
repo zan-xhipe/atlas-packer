@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"image"
@@ -135,8 +136,10 @@ func (n *Node) split(img *sprite) {
 
 func main() {
 	var space int
+	var dim string
 
 	flag.IntVar(&space, "space", 1, "space added between images")
+	flag.StringVar(&dim, "dimensions", "1024x1024", "atlas size")
 
 	flag.Parse()
 
@@ -144,6 +147,11 @@ func main() {
 
 	inputDir := args[0]
 	outputName := args[1]
+
+	dimX, dimY, err := parseDimensions(dim)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	files, _ := ioutil.ReadDir(inputDir)
 	sprites := make([]sprite, len(files))
@@ -157,9 +165,9 @@ func main() {
 	sort.Sort(sort.Reverse(ByArea(sprites)))
 
 	// the final image
-	dst := image.NewRGBA(image.Rect(0, 0, 2048, 2048))
+	dst := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
 
-	n := Node{rect: image.Rect(0, 0, 2048, 2048)}
+	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
 
 	for i := range sprites {
 		s := &sprites[i]
@@ -177,6 +185,26 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func parseDimensions(dim string) (dimX, dimY int, err error) {
+	dims := strings.Split(dim, "x")
+	if len(dims) != 2 {
+		err = fmt.Errorf("couldn't parse dimension %s\n", dims)
+		return
+	}
+
+	dimX, err = strconv.Atoi(dims[0])
+	if err != nil {
+		return
+	}
+
+	dimY, err = strconv.Atoi(dims[1])
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 func readSprite(dir, name string, space int) (s sprite) {
