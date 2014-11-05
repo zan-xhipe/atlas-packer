@@ -143,7 +143,7 @@ func main() {
 	sprites := make([]sprite, len(files))
 
 	for i := range sprites {
-		s := readSprite(inputDir, files[i].Name())
+		s := readSprite(inputDir, files[i].Name(), 1)
 		sprites[i] = s
 	}
 
@@ -173,7 +173,7 @@ func main() {
 	}
 }
 
-func readSprite(dir, name string) (s sprite) {
+func readSprite(dir, name string, space int) (s sprite) {
 	path := path.Join(dir, name)
 	reader, err := os.Open(path)
 	if err != nil {
@@ -189,7 +189,7 @@ func readSprite(dir, name string) (s sprite) {
 	s.name = name
 	s.img = img
 	s.rect = img.Bounds()
-	s.size = Size{s.rect.Dx(), s.rect.Dy()}
+	s.size = Size{s.rect.Dx() + space, s.rect.Dy() + space}
 	s.area = s.size.x * s.size.y
 	return
 }
