@@ -137,6 +137,7 @@ func main() {
 	args := flag.Args()
 
 	inputDir := args[0]
+	outputName := args[1]
 
 	files, _ := ioutil.ReadDir(inputDir)
 	sprites := make([]sprite, len(files))
@@ -165,7 +166,7 @@ func main() {
 
 	}
 
-	writer, err := os.Create("test.png")
+	writer, err := os.Create(outputName)
 	err = png.Encode(writer, dst)
 	if err != nil {
 		log.Fatal(err)
