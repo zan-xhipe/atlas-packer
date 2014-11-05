@@ -160,7 +160,7 @@ func main() {
 		if node != nil {
 			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
 		} else {
-			fmt.Printf("could not place %s\n", s.name)
+			log.Fatalf("could not place %s\n", s.name)
 		}
 
 	}
