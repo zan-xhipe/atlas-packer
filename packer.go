@@ -18,16 +18,15 @@ import (
 )
 
 type Size struct {
-	x, y int
-}
+	X, Y int
 }
 
 type sprite struct {
-	name   string
+	Name   string
+	Offset image.Point
+	Size   Size
 	img    image.Image
 	area   int
-	offset image.Point
-	size   Size
 }
 
 type ByArea []sprite
@@ -77,13 +76,13 @@ func (n *Node) insert(img *sprite) *Node {
 	}
 
 	// space too small
-	if n.rect.Dx() < img.size.x || n.rect.Dy() < img.size.y {
+	if n.rect.Dx() < img.Size.X || n.rect.Dy() < img.Size.Y {
 		return nil
 	}
 
 	// just right
-	if n.rect.Dx() == img.size.x && n.rect.Dy() == img.size.y {
-		img.offset = n.rect.Min
+	if n.rect.Dx() == img.Size.X && n.rect.Dy() == img.Size.Y {
+		img.Offset = n.rect.Min
 		n.img = img
 		return n
 	}
@@ -95,17 +94,17 @@ func (n *Node) insert(img *sprite) *Node {
 }
 
 func (n *Node) split(img *sprite) {
-	dx := n.rect.Dx() - img.size.x
-	dy := n.rect.Dy() - img.size.y
+	dx := n.rect.Dx() - img.Size.X
+	dy := n.rect.Dy() - img.Size.Y
 
 	if dx > dy {
 		n.child[0] = &Node{rect: image.Rect(
 			n.rect.Min.X,
 			n.rect.Min.Y,
-			n.rect.Min.X+img.size.x,
+			n.rect.Min.X+img.Size.X,
 			n.rect.Max.Y)}
 		n.child[1] = &Node{rect: image.Rect(
-			n.rect.Min.X+img.size.x,
+			n.rect.Min.X+img.Size.X,
 			n.rect.Min.Y,
 			n.rect.Max.X,
 			n.rect.Max.Y)}
@@ -114,10 +113,10 @@ func (n *Node) split(img *sprite) {
 			n.rect.Min.X,
 			n.rect.Min.Y,
 			n.rect.Max.X,
-			n.rect.Min.Y+img.size.y)}
+			n.rect.Min.Y+img.Size.Y)}
 		n.child[1] = &Node{rect: image.Rect(
 			n.rect.Min.X,
-			n.rect.Min.Y+img.size.y,
+			n.rect.Min.Y+img.Size.Y,
 			n.rect.Max.X,
 			n.rect.Max.Y)}
 	}
@@ -165,7 +164,7 @@ func main() {
 		if node != nil {
 			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
 		} else {
-			log.Fatalf("could not place %s\n", s.name)
+			log.Fatalf("could not place %s\n", s.Name)
 		}
 
 	}
@@ -210,10 +209,10 @@ func readSprite(dir, name string, space int) (s sprite) {
 		log.Fatal(err)
 	}
 
-	s.name = strings.TrimSuffix(name, filepath.Ext(name))
+	s.Name = strings.TrimSuffix(name, filepath.Ext(name))
 	s.img = img
 	rect := img.Bounds()
-	s.size = Size{rect.Dx() + space, rect.Dy() + space}
-	s.area = s.size.x * s.size.y
+	s.Size = Size{rect.Dx() + space, rect.Dy() + space}
+	s.area = s.Size.X * s.Size.Y
 	return
 }
