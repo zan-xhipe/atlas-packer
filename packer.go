@@ -145,9 +145,16 @@ func main() {
 	files, _ := ioutil.ReadDir(inputDir)
 	sprites := make([]sprite, len(files))
 
+	totalArea := 0
+
 	for i := range sprites {
 		s := readSprite(inputDir, files[i].Name(), space)
+		totalArea += s.area
 		sprites[i] = s
+	}
+
+	if totalArea > dimX*dimY {
+		log.Fatal("atlas to small")
 	}
 
 	// we want to place the largest sprite first
