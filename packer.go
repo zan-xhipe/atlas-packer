@@ -180,6 +180,11 @@ func main() {
 	}
 
 	writer, err := os.Create(outputName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer writer.Close()
+
 	err = png.Encode(writer, dst)
 	if err != nil {
 		log.Fatal(err)
