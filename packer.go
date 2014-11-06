@@ -179,13 +179,7 @@ func main() {
 
 	}
 
-	writer, err := os.Create(outputName)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer writer.Close()
-
-	err = png.Encode(writer, dst)
+	err = writeAtlas(outputName, dst)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -229,5 +223,20 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	rect := img.Bounds()
 	s.Size = Size{rect.Dx() + space, rect.Dy() + space}
 	s.area = s.Size.X * s.Size.Y
+	return
+}
+
+func writeAtlas(filename string, data *image.RGBA) (err error) {
+	writer, err := os.Create(filename)
+	if err != nil {
+		return
+	}
+	defer writer.Close()
+
+	err = png.Encode(writer, data)
+	if err != nil {
+		return
+	}
+
 	return
 }
