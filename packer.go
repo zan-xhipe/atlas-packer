@@ -157,7 +157,7 @@ func main() {
 	}
 
 	if totalArea > dimX*dimY {
-		log.Fatal("atlas to small")
+		log.Fatalf("%s atlas to small", dim)
 	}
 
 	// we want to place the largest sprite first
