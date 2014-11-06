@@ -142,7 +142,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	files, _ := ioutil.ReadDir(inputDir)
+	files, err := ioutil.ReadDir(inputDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	sprites := make([]sprite, len(files))
 
 	totalArea := 0
