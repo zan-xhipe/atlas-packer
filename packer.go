@@ -148,7 +148,10 @@ func main() {
 	totalArea := 0
 
 	for i := range sprites {
-		s := readSprite(inputDir, files[i].Name(), space)
+		s, err := readSprite(inputDir, files[i].Name(), space)
+		if err != nil {
+			log.Fatal(err)
+		}
 		totalArea += s.area
 		sprites[i] = s
 	}
@@ -203,17 +206,17 @@ func parseDimensions(dim string) (dimX, dimY int, err error) {
 	return
 }
 
-func readSprite(dir, name string, space int) (s sprite) {
+func readSprite(dir, name string, space int) (s sprite, err error) {
 	path := path.Join(dir, name)
 	reader, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	defer reader.Close()
 
 	img, _, err := image.Decode(reader)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 
 	s.Name = strings.TrimSuffix(name, filepath.Ext(name))
