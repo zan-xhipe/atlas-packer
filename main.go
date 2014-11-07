@@ -61,30 +61,7 @@ func main() {
 	// we want to place the largest sprite first
 	sort.Sort(sort.Reverse(ByArea(sprites)))
 
-	// the final image
-	img := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
-
-	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
-
-	var data []byte
-
-	for i := range sprites {
-		s := &sprites[i]
-		node := n.insert(s)
-
-		j, err := json.Marshal(s)
-		if err != nil {
-			log.Fatal(err)
-		}
-		data = append(data, j...)
-
-		if node != nil {
-			draw.Draw(img, node.rect, s.img, image.ZP, draw.Src)
-		} else {
-			log.Fatalf("could not place %s\n", s.Name)
-		}
-
-	}
+	img, data := packAtlas(sprites, dimX, dimY)
 
 	err = writeAtlas(outputName, img, data)
 	if err != nil {
@@ -131,6 +108,34 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	s.Size = Size{rect.Dx() + space, rect.Dy() + space}
 	s.area = s.Size.X * s.Size.Y
 	return
+}
+
+func packAtlas(sprites []sprite, dimX, dimY int) (*image.RGBA, []byte) {
+	img := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
+
+	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
+
+	var data []byte
+
+	for i := range sprites {
+		s := &sprites[i]
+		node := n.insert(s)
+
+		j, err := json.Marshal(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data = append(data, j...)
+
+		if node != nil {
+			draw.Draw(img, node.rect, s.img, image.ZP, draw.Src)
+		} else {
+			log.Fatalf("could not place %s\n", s.Name)
+		}
+
+	}
+
+	return img, data
 }
 
 func writeAtlas(name string, img *image.RGBA, data []byte) error {
