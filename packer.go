@@ -193,9 +193,7 @@ func main() {
 
 	}
 
-	fmt.Println(string(data))
-
-	err = writeAtlas(outputName, img)
+	err = writeAtlas(outputName, img, data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -242,14 +240,28 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	return
 }
 
-func writeAtlas(filename string, data *image.RGBA) (err error) {
-	writer, err := os.Create(filename)
+func writeAtlas(name string, img *image.RGBA, data []byte) (err error) {
+	imageName := name + ".png"
+	dataName := name + ".json"
+
+	imageWriter, err := os.Create(imageName)
 	if err != nil {
 		return
 	}
-	defer writer.Close()
+	defer imageWriter.Close()
 
-	err = png.Encode(writer, data)
+	dataWriter, err := os.Create(dataName)
+	if err != nil {
+		return
+	}
+	defer dataWriter.Close()
+
+	_, err = dataWriter.Write(data)
+	if err != nil {
+		return
+	}
+
+	err = png.Encode(imageWriter, img)
 	if err != nil {
 		return
 	}
