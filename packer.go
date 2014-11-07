@@ -240,31 +240,31 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	return
 }
 
-func writeAtlas(name string, img *image.RGBA, data []byte) (err error) {
+func writeAtlas(name string, img *image.RGBA, data []byte) error {
 	imageName := name + ".png"
 	dataName := name + ".json"
 
 	imageWriter, err := os.Create(imageName)
 	if err != nil {
-		return
+		return err
 	}
 	defer imageWriter.Close()
 
 	dataWriter, err := os.Create(dataName)
 	if err != nil {
-		return
+		return err
 	}
 	defer dataWriter.Close()
 
-	_, err = dataWriter.Write(data)
+	n, err := dataWriter.Write(data)
 	if err != nil {
-		return
+		return fmt.Errorf("position: %d error: %s", n, err)
 	}
 
 	err = png.Encode(imageWriter, img)
 	if err != nil {
-		return
+		return err
 	}
 
-	return
+	return nil
 }
