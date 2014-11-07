@@ -169,7 +169,7 @@ func main() {
 	sort.Sort(sort.Reverse(ByArea(sprites)))
 
 	// the final image
-	dst := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
+	img := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
 
 	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
 
@@ -186,7 +186,7 @@ func main() {
 		data = append(data, j...)
 
 		if node != nil {
-			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
+			draw.Draw(img, node.rect, s.img, image.ZP, draw.Src)
 		} else {
 			log.Fatalf("could not place %s\n", s.Name)
 		}
@@ -195,7 +195,7 @@ func main() {
 
 	fmt.Println(string(data))
 
-	err = writeAtlas(outputName, dst)
+	err = writeAtlas(outputName, img)
 	if err != nil {
 		log.Fatal(err)
 	}
