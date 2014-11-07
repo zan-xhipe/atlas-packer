@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -172,9 +173,18 @@ func main() {
 
 	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
 
+	var data []byte
+
 	for i := range sprites {
 		s := &sprites[i]
 		node := n.insert(s)
+
+		j, err := json.Marshal(s)
+		if err != nil {
+			log.Fatal(err)
+		}
+		data = append(data, j...)
+
 		if node != nil {
 			draw.Draw(dst, node.rect, s.img, image.ZP, draw.Src)
 		} else {
@@ -182,6 +192,8 @@ func main() {
 		}
 
 	}
+
+	fmt.Println(string(data))
 
 	err = writeAtlas(outputName, dst)
 	if err != nil {
