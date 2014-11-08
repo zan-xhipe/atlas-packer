@@ -11,10 +11,6 @@ type Node struct {
 	img   *sprite
 }
 
-func (n *Node) size() Size {
-	return Size{n.rect.Dx(), n.rect.Dy()}
-}
-
 func (n *Node) print() {
 	fmt.Println(n)
 	if n.child[0] != nil {
