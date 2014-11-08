@@ -61,7 +61,7 @@ func main() {
 	// we want to place the largest sprite first
 	sort.Sort(sort.Reverse(ByArea(sprites)))
 
-	img, data := packAtlas(sprites, dimX, dimY)
+	img, data := packAtlas(sprites, dimX, dimY, space)
 
 	err = writeAtlas(outputName, img, data)
 	if err != nil {
@@ -110,7 +110,7 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	return
 }
 
-func packAtlas(sprites []sprite, dimX, dimY int) (*image.RGBA, []byte) {
+func packAtlas(sprites []sprite, dimX, dimY, space int) (*image.RGBA, []byte) {
 	img := image.NewRGBA(image.Rect(0, 0, dimX, dimY))
 
 	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
@@ -120,6 +120,10 @@ func packAtlas(sprites []sprite, dimX, dimY int) (*image.RGBA, []byte) {
 	for i := range sprites {
 		s := &sprites[i]
 		node := n.insert(s)
+
+		// need to remove all space added around the sprite
+		s.Size.X -= space
+		s.Size.Y -= space
 
 		j, err := json.MarshalIndent(s, "", " ")
 		if err != nil {
