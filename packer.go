@@ -5,6 +5,7 @@ import (
 	"image"
 )
 
+// Node in a binary tree that hold sprites
 type node struct {
 	child [2]*node
 	rect  image.Rectangle
@@ -25,6 +26,9 @@ func (n *node) isLeaf() bool {
 	return n.child[0] == nil || n.child[1] == nil
 }
 
+// insert a sprite in the tree. Returns nil if it can't fit
+// returns the node that it does fit in.
+// will split the node if it is too big
 func (n *node) insert(img *sprite) *node {
 	if !n.isLeaf() {
 		node := n.child[0].insert(img)
@@ -59,10 +63,13 @@ func (n *node) insert(img *sprite) *node {
 	return n.child[0].insert(img)
 }
 
+// split the node along one axis. The first child is the right
+// shape so that it should fit perfectly within two splits
 func (n *node) split(img *sprite) {
 	dx := n.rect.Dx() - img.Size.X
 	dy := n.rect.Dy() - img.Size.Y
 
+	// which axis to split on
 	if dx > dy {
 		n.child[0] = &node{rect: image.Rect(
 			n.rect.Min.X,
