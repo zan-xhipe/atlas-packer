@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"strconv"
 	"strings"
@@ -28,14 +27,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	files, err := ioutil.ReadDir(inputDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	atlas := atlas{dimX: dimX, dimY: dimY, space: space}
 
-	err = atlas.readSprites(inputDir, files)
+	err = atlas.readDir(inputDir)
 	if err != nil {
 		log.Fatal(err)
 	}

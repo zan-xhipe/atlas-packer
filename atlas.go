@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -21,8 +22,14 @@ type atlas struct {
 	data       []byte
 }
 
-func (a *atlas) readSprites(dir string, files []os.FileInfo) error {
+func (a *atlas) readDir(dir string) error {
 	var area int
+
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+
 	a.sprites = make([]sprite, len(files))
 
 	for i := range a.sprites {
