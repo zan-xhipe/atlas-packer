@@ -45,6 +45,8 @@ func main() {
 	}
 }
 
+// parseDimensions takes a string of two numbers separated with an x
+// and returns two ints representing a width and a height
 func parseDimensions(dim string) (dimX, dimY int, err error) {
 	dims := strings.Split(dim, "x")
 	if len(dims) != 2 {
