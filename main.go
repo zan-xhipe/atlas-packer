@@ -35,14 +35,11 @@ func main() {
 
 	atlas := atlas{dimX: dimX, dimY: dimY, space: space}
 
-	totalArea, err := atlas.readSprites(inputDir, files)
+	err = atlas.readSprites(inputDir, files)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if totalArea > dimX*dimY {
-		log.Fatalf("%s atlas to small", dim)
-	}
 	err = atlas.pack()
 	if err != nil {
 		log.Fatal(err)

@@ -21,19 +21,24 @@ type atlas struct {
 	data       []byte
 }
 
-func (a *atlas) readSprites(dir string, files []os.FileInfo) (int, error) {
+func (a *atlas) readSprites(dir string, files []os.FileInfo) error {
 	var area int
 	a.sprites = make([]sprite, len(files))
 
 	for i := range a.sprites {
 		s, err := readSprite(dir, files[i].Name(), a.space)
 		if err != nil {
-			return area, err
+			return err
 		}
 		area += s.area
 		a.sprites[i] = s
 	}
-	return area, nil
+
+	if area > a.dimX*a.dimY {
+		return fmt.Errorf("atlas to small")
+	}
+
+	return nil
 }
 
 func readSprite(dir, name string, space int) (s sprite, err error) {
