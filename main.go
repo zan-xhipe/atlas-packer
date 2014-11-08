@@ -115,16 +115,17 @@ func packAtlas(sprites []sprite, dimX, dimY int) (*image.RGBA, []byte) {
 
 	n := Node{rect: image.Rect(0, 0, dimX, dimY)}
 
-	var data []byte
+	data := []byte("[")
 
 	for i := range sprites {
 		s := &sprites[i]
 		node := n.insert(s)
 
-		j, err := json.Marshal(s)
+		j, err := json.MarshalIndent(s, "", " ")
 		if err != nil {
 			log.Fatal(err)
 		}
+		data = append(data, '\n')
 		data = append(data, j...)
 
 		if node != nil {
@@ -134,6 +135,8 @@ func packAtlas(sprites []sprite, dimX, dimY int) (*image.RGBA, []byte) {
 		}
 
 	}
+
+	data = append(data, []byte("]")...)
 
 	return img, data
 }
