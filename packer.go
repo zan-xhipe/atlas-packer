@@ -5,13 +5,13 @@ import (
 	"image"
 )
 
-type Node struct {
-	child [2]*Node
+type node struct {
+	child [2]*node
 	rect  image.Rectangle
 	img   *sprite
 }
 
-func (n *Node) print() {
+func (n *node) print() {
 	fmt.Println(n)
 	if n.child[0] != nil {
 		n.child[0].print()
@@ -21,11 +21,11 @@ func (n *Node) print() {
 	}
 }
 
-func (n *Node) isLeaf() bool {
+func (n *node) isLeaf() bool {
 	return n.child[0] == nil || n.child[1] == nil
 }
 
-func (n *Node) insert(img *sprite) *Node {
+func (n *node) insert(img *sprite) *node {
 	if !n.isLeaf() {
 		node := n.child[0].insert(img)
 
@@ -59,28 +59,28 @@ func (n *Node) insert(img *sprite) *Node {
 	return n.child[0].insert(img)
 }
 
-func (n *Node) split(img *sprite) {
+func (n *node) split(img *sprite) {
 	dx := n.rect.Dx() - img.Size.X
 	dy := n.rect.Dy() - img.Size.Y
 
 	if dx > dy {
-		n.child[0] = &Node{rect: image.Rect(
+		n.child[0] = &node{rect: image.Rect(
 			n.rect.Min.X,
 			n.rect.Min.Y,
 			n.rect.Min.X+img.Size.X,
 			n.rect.Max.Y)}
-		n.child[1] = &Node{rect: image.Rect(
+		n.child[1] = &node{rect: image.Rect(
 			n.rect.Min.X+img.Size.X,
 			n.rect.Min.Y,
 			n.rect.Max.X,
 			n.rect.Max.Y)}
 	} else {
-		n.child[0] = &Node{rect: image.Rect(
+		n.child[0] = &node{rect: image.Rect(
 			n.rect.Min.X,
 			n.rect.Min.Y,
 			n.rect.Max.X,
 			n.rect.Min.Y+img.Size.Y)}
-		n.child[1] = &Node{rect: image.Rect(
+		n.child[1] = &node{rect: image.Rect(
 			n.rect.Min.X,
 			n.rect.Min.Y+img.Size.Y,
 			n.rect.Max.X,

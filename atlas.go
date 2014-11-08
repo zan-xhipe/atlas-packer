@@ -81,7 +81,7 @@ func (a *atlas) pack() error {
 
 	a.img = image.NewRGBA(image.Rect(0, 0, a.dimX, a.dimY))
 
-	n := Node{rect: image.Rect(0, 0, a.dimX, a.dimY)}
+	n := node{rect: image.Rect(0, 0, a.dimX, a.dimY)}
 
 	a.data = []byte("[")
 
