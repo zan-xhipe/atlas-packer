@@ -6,14 +6,17 @@ type Size struct {
 	X, Y int
 }
 
+// sprite contains image and placement data for sprites
+// it also has exported fields for data serialisation
 type sprite struct {
-	Name   string
-	Offset image.Point
-	Size   Size
+	Name   string      // sprite name without extension
+	Offset image.Point // offset in atlas
+	Size   Size        // image size
 	img    image.Image
 	area   int
 }
 
+// sprites can be sorted by area for easy placement
 type ByArea []sprite
 
 func (a ByArea) Len() int           { return len(a) }
