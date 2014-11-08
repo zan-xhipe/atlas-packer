@@ -1,0 +1,25 @@
+
+A command line utility to pack a collections of sprites into a larger image.
+
+* Usage
+  atlas-packer [options] spriteDirectory output
+  
+  --dimensions 1024x1024 Size of the final atlas
+
+  --space 1 space between sprites
+  
+  It will produce two files output.png and output.json
+
+* Motivation
+  I wanted an small open source command line texture packer as part of the build process for my games.  I dislike storing the entire sprite atlas in git as if you change one sprite you end up with two binary files changed.  I was also tired of manually updating the atlas every time I changed a sprite.  When I decided to learn go I thought that this would be a nice project to start with.
+
+* Restrictions
+  All sprites must be in the same directory, everything in that directory must be a sprite.  This is to help promote good organisation.
+
+  At the moment it only outputs the atlas texture as a png, and the atlas data as json.
+
+* Future
+  Maybe:
+  - More export types
+  - Sprite rotation
+  - Automatic atlas size
