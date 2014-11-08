@@ -22,6 +22,8 @@ type atlas struct {
 	data       []byte
 }
 
+// readDir takes a directory and processes the sprites in it\
+// if it encounters a non image file it crashes
 func (a *atlas) readDir(dir string) error {
 	var area int
 
@@ -48,6 +50,7 @@ func (a *atlas) readDir(dir string) error {
 	return nil
 }
 
+// readSprite takes a file and returns the sprite
 func readSprite(dir, name string, space int) (s sprite, err error) {
 	path := path.Join(dir, name)
 	reader, err := os.Open(path)
@@ -69,6 +72,8 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 	return
 }
 
+// pack finds a way to layout all the atlas' sprites so that
+// they fit inside the atlas nicely
 func (a *atlas) pack() error {
 
 	// we want to place the largest sprite first
@@ -108,6 +113,8 @@ func (a *atlas) pack() error {
 	return nil
 }
 
+// write creates name.png and name.json
+// for the atlas texture and data
 func (a *atlas) write(name string) error {
 	imageName := name + ".png"
 	dataName := name + ".json"
