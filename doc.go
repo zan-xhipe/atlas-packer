@@ -3,6 +3,7 @@ atlas-packer [options] spriteDir output
 
 	--dimensions=1024x1024: Size of final atlas
 	--space=1: Space inserted between sprites, in pixels
+    -v Verbose output
 
 outputs two files: <output>.png, and <output>.json
 

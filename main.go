@@ -11,9 +11,11 @@ import (
 func main() {
 	var space int
 	var dim string
+	var verbose bool
 
 	flag.IntVar(&space, "space", 1, "space added between images")
 	flag.StringVar(&dim, "dimensions", "1024x1024", "atlas size")
+	flag.BoolVar(&verbose, "v", false, "verbose output")
 
 	flag.Parse()
 
@@ -33,15 +35,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	if verbose {
+		log.Println("read sprite directory")
+	}
 
 	err = atlas.pack()
 	if err != nil {
 		log.Fatal(err)
 	}
+	if verbose {
+		log.Println("packed sprites in atlas")
+	}
 
 	err = atlas.write(outputName)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if verbose {
+		log.Printf("wrote atlas to file")
 	}
 }
 

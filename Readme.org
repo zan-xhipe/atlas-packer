@@ -1,4 +1,5 @@
 
+
 A command line utility to pack a collections of sprites into a larger image.
 
 * Usage
@@ -7,6 +8,8 @@ A command line utility to pack a collections of sprites into a larger image.
   --dimensions 1024x1024 Size of the final atlas
 
   --space 1 space between sprites
+
+  -v Verbose output
   
   It will produce two files output.png and output.json
 
