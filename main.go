@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -12,10 +13,12 @@ func main() {
 	var space int
 	var dim string
 	var verbose bool
+	var forceRebuild bool
 
 	flag.IntVar(&space, "space", 1, "space added between images")
 	flag.StringVar(&dim, "dimensions", "1024x1024", "atlas size")
 	flag.BoolVar(&verbose, "v", false, "verbose output")
+	flag.BoolVar(&forceRebuild, "force", false, "force rebuild")
 
 	flag.Parse()
 
@@ -23,6 +26,27 @@ func main() {
 
 	inputDir := args[0]
 	outputName := args[1]
+
+	imgName := outputName + ".png"
+	dataName := outputName + ".json"
+
+	// check if it is necessary to rebuild the atlas
+	if !forceRebuild {
+		imgInfo, imgErr := os.Stat(imgName)
+		datInfo, datErr := os.Stat(dataName)
+		dirInfo, dirErr := os.Stat(inputDir)
+
+		if imgErr == nil && datErr == nil && dirErr == nil &&
+			dirInfo.ModTime().Before(imgInfo.ModTime()) &&
+			dirInfo.ModTime().Before(datInfo.ModTime()) {
+
+			if verbose {
+				log.Println("already up to date")
+			}
+
+			os.Exit(0)
+		}
+	}
 
 	dimX, dimY, err := parseDimensions(dim)
 	if err != nil {

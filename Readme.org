@@ -9,9 +9,13 @@ A command line utility to pack a collections of sprites into a larger image.
 
   --space 1 space between sprites
 
+  --force false always rebuild the atlas
+
   -v Verbose output
   
   It will produce two files output.png and output.json
+
+  By Default it will only rebuild the atlas if its necessary.  This is determined by if the sprite directory has been modified since the last atlas modification.
 
 * Restrictions
   All sprites must be in the same directory, everything in that directory must be a sprite.  This is to help promote good organisation.
