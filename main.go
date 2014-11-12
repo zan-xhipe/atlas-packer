@@ -71,7 +71,7 @@ func main() {
 		log.Println("packed sprites in atlas")
 	}
 
-	err = atlas.write(outputName)
+	err = atlas.write(imgName, dataName)
 	if err != nil {
 		log.Fatal(err)
 	}

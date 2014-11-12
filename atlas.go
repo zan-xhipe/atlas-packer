@@ -115,9 +115,7 @@ func (a *atlas) pack() error {
 
 // write creates name.png and name.json
 // for the atlas texture and data
-func (a *atlas) write(name string) error {
-	imageName := name + ".png"
-	dataName := name + ".json"
+func (a *atlas) write(imageName, dataName string) error {
 
 	imageWriter, err := os.Create(imageName)
 	if err != nil {
