@@ -2,6 +2,7 @@ package main
 
 import "image"
 
+// Size of a sprite
 type Size struct {
 	X, Y int
 }
@@ -16,7 +17,7 @@ type sprite struct {
 	area   int
 }
 
-// sprites can be sorted by area for easy placement
+// ByArea to help sort sprites for easy placement
 type ByArea []sprite
 
 func (a ByArea) Len() int           { return len(a) }

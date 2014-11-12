@@ -35,9 +35,8 @@ func (n *node) insert(img *sprite) *node {
 
 		if node != nil {
 			return node
-		} else {
-			return n.child[1].insert(img)
 		}
+		return n.child[1].insert(img)
 	}
 
 	// there is already an image in this node
