@@ -1,4 +1,4 @@
-package main
+package packer
 
 import (
 	"encoding/json"
@@ -14,9 +14,9 @@ import (
 	"strings"
 )
 
-type atlas struct {
-	dimX, dimY int
-	space      int
+type Atlas struct {
+	DimX, DimY int
+	Space      int
 	sprites    []sprite
 	img        *image.RGBA
 	data       []byte
@@ -24,7 +24,7 @@ type atlas struct {
 
 // readDir takes a directory and processes the sprites in it\
 // if it encounters a non image file it crashes
-func (a *atlas) readDir(dir string) error {
+func (a *Atlas) ReadDir(dir string) error {
 	var area int
 
 	files, err := ioutil.ReadDir(dir)
@@ -35,7 +35,7 @@ func (a *atlas) readDir(dir string) error {
 	a.sprites = make([]sprite, len(files))
 
 	for i := range a.sprites {
-		s, err := readSprite(dir, files[i].Name(), a.space)
+		s, err := readSprite(dir, files[i].Name(), a.Space)
 		if err != nil {
 			return err
 		}
@@ -43,7 +43,7 @@ func (a *atlas) readDir(dir string) error {
 		a.sprites[i] = s
 	}
 
-	if area > a.dimX*a.dimY {
+	if area > a.DimX*a.DimY {
 		return fmt.Errorf("atlas to small")
 	}
 
@@ -74,14 +74,14 @@ func readSprite(dir, name string, space int) (s sprite, err error) {
 
 // pack finds a way to layout all the atlas' sprites so that
 // they fit inside the atlas nicely
-func (a *atlas) pack() error {
+func (a *Atlas) Pack() error {
 
 	// we want to place the largest sprite first
 	sort.Sort(sort.Reverse(ByArea(a.sprites)))
 
-	a.img = image.NewRGBA(image.Rect(0, 0, a.dimX, a.dimY))
+	a.img = image.NewRGBA(image.Rect(0, 0, a.DimX, a.DimY))
 
-	n := node{rect: image.Rect(0, 0, a.dimX, a.dimY)}
+	n := node{rect: image.Rect(0, 0, a.DimX, a.DimY)}
 
 	a.data = []byte("[")
 
@@ -90,8 +90,8 @@ func (a *atlas) pack() error {
 		node := n.insert(s)
 
 		// need to remove all space added around the sprite
-		s.Size.X -= a.space
-		s.Size.Y -= a.space
+		s.Size.X -= a.Space
+		s.Size.Y -= a.Space
 
 		j, err := json.MarshalIndent(s, "", " ")
 		if err != nil {
@@ -115,7 +115,7 @@ func (a *atlas) pack() error {
 
 // write creates name.png and name.json
 // for the atlas texture and data
-func (a *atlas) write(imageName, dataName string) error {
+func (a *Atlas) Write(imageName, dataName string) error {
 
 	imageWriter, err := os.Create(imageName)
 	if err != nil {

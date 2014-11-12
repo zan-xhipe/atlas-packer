@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/zan-xhipe/atlas-packer/packer"
 )
 
 func main() {
@@ -53,9 +55,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	atlas := atlas{dimX: dimX, dimY: dimY, space: space}
+	atlas := packer.Atlas{DimX: dimX, DimY: dimY, Space: space}
 
-	err = atlas.readDir(inputDir)
+	err = atlas.ReadDir(inputDir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,7 +65,7 @@ func main() {
 		log.Println("read sprite directory")
 	}
 
-	err = atlas.pack()
+	err = atlas.Pack()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +73,7 @@ func main() {
 		log.Println("packed sprites in atlas")
 	}
 
-	err = atlas.write(imgName, dataName)
+	err = atlas.Write(imgName, dataName)
 	if err != nil {
 		log.Fatal(err)
 	}
