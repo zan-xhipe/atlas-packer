@@ -9,7 +9,7 @@ import (
 type node struct {
 	child [2]*node
 	rect  image.Rectangle
-	img   *sprite
+	img   *Sprite
 }
 
 func (n *node) print() {
@@ -29,7 +29,7 @@ func (n *node) isLeaf() bool {
 // insert a sprite in the tree. Returns nil if it can't fit
 // returns the node that it does fit in.
 // will split the node if it is too big
-func (n *node) insert(img *sprite) *node {
+func (n *node) insert(img *Sprite) *node {
 	if !n.isLeaf() {
 		node := n.child[0].insert(img)
 
@@ -64,7 +64,7 @@ func (n *node) insert(img *sprite) *node {
 
 // split the node along one axis. The first child is the right
 // shape so that it should fit perfectly within two splits
-func (n *node) split(img *sprite) {
+func (n *node) split(img *Sprite) {
 	dx := n.rect.Dx() - img.Size.X
 	dy := n.rect.Dy() - img.Size.Y
 

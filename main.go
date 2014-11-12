@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"image"
+	"image/png"
 	"log"
 	"os"
 	"strconv"
@@ -55,9 +57,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	atlas := packer.Atlas{DimX: dimX, DimY: dimY, Space: space}
-
-	err = atlas.ReadDir(inputDir)
+	sprites, err := packer.ReadSprites(inputDir)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +65,9 @@ func main() {
 		log.Println("read sprite directory")
 	}
 
-	err = atlas.Pack()
+	atlas := packer.Atlas{DimX: dimX, DimY: dimY, Space: space}
+
+	img, data, err := packer.Pack(sprites, atlas)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,13 +75,22 @@ func main() {
 		log.Println("packed sprites in atlas")
 	}
 
-	err = atlas.Write(imgName, dataName)
+	err = writeData(data, dataName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if verbose {
-		log.Printf("wrote atlas to file")
+		log.Printf("wrote data to file")
 	}
+
+	err = writeImage(img, imgName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if verbose {
+		log.Printf("wrote texture to file")
+	}
+
 }
 
 // parseDimensions takes a string of two numbers separated with an x
@@ -102,4 +113,34 @@ func parseDimensions(dim string) (dimX, dimY int, err error) {
 	}
 
 	return
+}
+
+func writeData(data []byte, filename string) error {
+	writer, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	n, err := writer.Write(data)
+	if err != nil {
+		return fmt.Errorf("position: %d error: %s", n, err)
+	}
+
+	return nil
+}
+
+func writeImage(image *image.RGBA, filename string) error {
+	writer, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	err = png.Encode(writer, image)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

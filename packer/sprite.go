@@ -7,9 +7,9 @@ type Size struct {
 	X, Y int
 }
 
-// sprite contains image and placement data for sprites
+// Sprite contains image and placement data for sprites
 // it also has exported fields for data serialisation
-type sprite struct {
+type Sprite struct {
 	Name   string      // sprite name without extension
 	Offset image.Point // offset in atlas
 	Size   Size        // image size
@@ -18,7 +18,7 @@ type sprite struct {
 }
 
 // ByArea to help sort sprites for easy placement
-type ByArea []sprite
+type ByArea []Sprite
 
 func (a ByArea) Len() int           { return len(a) }
 func (a ByArea) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
