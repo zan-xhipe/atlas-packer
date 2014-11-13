@@ -59,7 +59,7 @@ func Pack(sprites []Sprite, atlas Atlas) (*image.RGBA, []byte, error) {
 
 	}
 
-	data = append(data, []byte("]")...)
+	data = append(data, "]"...)
 
 	return img, data, nil
 
