@@ -14,15 +14,10 @@ import (
 )
 
 func main() {
-	var space int
-	var dim string
-	var verbose bool
-	var forceRebuild bool
-
-	flag.IntVar(&space, "space", 1, "space added between images")
-	flag.StringVar(&dim, "dimensions", "1024x1024", "atlas size")
-	flag.BoolVar(&verbose, "v", false, "verbose output")
-	flag.BoolVar(&forceRebuild, "force", false, "force rebuild")
+	space := flag.Int("space", 1, "space added between images")
+	dim := flag.String("dimensions", "1024x1024", "atlas size")
+	verbose := flag.Bool("v", false, "verbose output")
+	forceRebuild := flag.Bool("force", false, "force rebuild")
 
 	flag.Parse()
 
@@ -35,7 +30,7 @@ func main() {
 	dataName := outputName + ".json"
 
 	// check if it is necessary to rebuild the atlas
-	if !forceRebuild {
+	if !*forceRebuild {
 		imgInfo, imgErr := os.Stat(imgName)
 		datInfo, datErr := os.Stat(dataName)
 		dirInfo, dirErr := os.Stat(inputDir)
@@ -44,7 +39,7 @@ func main() {
 			dirInfo.ModTime().Before(imgInfo.ModTime()) &&
 			dirInfo.ModTime().Before(datInfo.ModTime()) {
 
-			if verbose {
+			if *verbose {
 				log.Println("already up to date")
 			}
 
@@ -52,7 +47,7 @@ func main() {
 		}
 	}
 
-	dimX, dimY, err := parseDimensions(dim)
+	dimX, dimY, err := parseDimensions(*dim)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,17 +56,17 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if verbose {
+	if *verbose {
 		log.Println("read sprite directory")
 	}
 
-	atlas := packer.Atlas{DimX: dimX, DimY: dimY, Space: space}
+	atlas := packer.Atlas{DimX: dimX, DimY: dimY, Space: *space}
 
 	img, data, err := packer.Pack(sprites, atlas)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if verbose {
+	if *verbose {
 		log.Println("packed sprites in atlas")
 	}
 
@@ -79,7 +74,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if verbose {
+	if *verbose {
 		log.Printf("wrote data to file")
 	}
 
@@ -87,7 +82,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if verbose {
+	if *verbose {
 		log.Printf("wrote texture to file")
 	}
 
