@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -70,7 +71,7 @@ func main() {
 		log.Println("packed sprites in atlas")
 	}
 
-	err = writeData(data, dataName)
+	err = ioutil.WriteFile(dataName, data, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -108,21 +109,6 @@ func parseDimensions(dim string) (dimX, dimY int, err error) {
 	}
 
 	return
-}
-
-func writeData(data []byte, filename string) error {
-	writer, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer writer.Close()
-
-	n, err := writer.Write(data)
-	if err != nil {
-		return fmt.Errorf("position: %d error: %s", n, err)
-	}
-
-	return nil
 }
 
 func writeImage(image *image.RGBA, filename string) error {
