@@ -23,7 +23,7 @@ type Atlas struct {
 func Pack(sprites []Sprite, atlas Atlas) (*image.RGBA, []byte, error) {
 
 	// we want to place the largest sprite first
-	sort.Sort(sort.Reverse(ByArea(sprites)))
+	sort.Sort(sort.Reverse(byArea(sprites)))
 
 	img := image.NewRGBA(image.Rect(0, 0, atlas.DimX, atlas.DimY))
 
@@ -104,7 +104,7 @@ func readSprite(dir, name string) (Sprite, error) {
 	s.Name = strings.TrimSuffix(name, filepath.Ext(name))
 	s.img = img
 	rect := img.Bounds()
-	s.Size = Size{rect.Dx(), rect.Dy()}
+	s.Size = size{rect.Dx(), rect.Dy()}
 	s.area = s.Size.X * s.Size.Y
 	return s, nil
 }

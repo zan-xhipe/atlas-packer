@@ -2,8 +2,8 @@ package packer
 
 import "image"
 
-// Size of a sprite
-type Size struct {
+// size of a sprite
+type size struct {
 	X, Y int
 }
 
@@ -12,14 +12,14 @@ type Size struct {
 type Sprite struct {
 	Name   string      // sprite name without extension
 	Offset image.Point // offset in atlas
-	Size   Size        // image size
+	Size   size        // image size
 	img    image.Image
 	area   int
 }
 
-// ByArea to help sort sprites for easy placement
-type ByArea []Sprite
+// byArea to help sort sprites for easy placement
+type byArea []Sprite
 
-func (a ByArea) Len() int           { return len(a) }
-func (a ByArea) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByArea) Less(i, j int) bool { return a[i].area < a[j].area }
+func (a byArea) Len() int           { return len(a) }
+func (a byArea) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a byArea) Less(i, j int) bool { return a[i].area < a[j].area }
